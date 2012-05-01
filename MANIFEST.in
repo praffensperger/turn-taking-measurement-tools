@@ -1,0 +1,4 @@
+#include MANIFEST.in
+include *.txt
+exclude tidy_and_push.py
+recursive-include examples *.txt *.py
