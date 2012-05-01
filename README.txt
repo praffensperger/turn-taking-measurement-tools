@@ -11,6 +11,7 @@ Features:
 
 Dependencies:
 - numpy
+- matplotlib or pyGnuplot for examples (optional)
 
 If you use Turn-Taking Measurement Tools in an academic project, we invite you to reference the original publication:
 Raffensperger, P. A., Webb, R. Y., Bones, P. J., and McInnes, A. I. (2012). A simple metric for turn-taking in emergent communication. Adaptive Behavior, 20(2):104-116.

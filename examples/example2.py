@@ -1,7 +1,7 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # Turn-Taking Measurement Tools v0.1 
 #
-# example1.py
+# example2.py
 #
 # By Peter Raffensperger 01 May 2012
 # 

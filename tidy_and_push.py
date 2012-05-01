@@ -99,11 +99,11 @@ def run_tests():
 def commit():
 	print "Enter a commit message"
 	msg = raw_input()
-	os.system('git commit -m "' + msg + '"')
+	os.system('git commit -am "' + msg + '"')
 
 def push_to_google_code():
 	print "Pushing changes to Google code git respository..."
-	os.system('git https://code.google.com/p/turn-taking-measurement-tools/')
+	os.system('git push https://code.google.com/p/turn-taking-measurement-tools/ master')
 
 def make_source_distribution():
 	print "Making source distribution file..."
