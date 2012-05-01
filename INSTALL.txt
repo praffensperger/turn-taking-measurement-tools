@@ -1,0 +1,27 @@
+Installing Turn Taking Measurement Tools
+++++++++++++++++++++++++++++++++++++++++
+
+:Authors: Peter Raffensperger
+
+.. Contents::
+
+PREREQUISITES
+=============
+
+Turn Taking Measurement Tools requires the following software installed:
+
+1) Python (known to work with 2.7.3, will probably work with 2.6 and 3.x)
+
+2) numpy
+
+3) matplotlib or Gnuplot for examples (optional)
+
+
+INSTALLING
+==========
+
+Install on the command line by navigating to the source directory and 
+running setup.py in the usual way:
+    python setup.py install
+
+For more help see: http://docs.python.org/install/index.html
