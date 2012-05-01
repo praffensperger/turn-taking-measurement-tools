@@ -49,9 +49,14 @@ except ImportError:
 	sys.path.append('..')
 	import turntakingmeasurementtools
 
-usageAttemptSequences = [[0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1], 
+usageAttemptSequences = [[0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1], 
 						 [1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0], 
 						 [0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0]]
+
+A = len(usageAttemptSequences)
+r = len(usageAttemptSequences[0])
+t = 0
+samplesize = 1000
 
 def print_uas():
 	print """Time    """,
@@ -67,7 +72,7 @@ def print_uas():
 			print str(usageAttemptSequences[a][t]) + '  ',
 	print
 
-print """Consider a situation where we have a 3 agents who share a common
+print """Consider a situation where we have """ + str(A) + """ agents who share a common
 resource that can only be used by one of the agents at a time. If two agents
 try to use the resource at the same time, then neither agent gets usage of the
 resource at that time.
@@ -82,7 +87,7 @@ To what degree are the agents taking turns using the shared resource?
 [Press ENTER to continue]"""
 blah = raw_input()
 print """To answer this question, we need a quantitative metric for turn-taking.
-This software package implements tau-tau, a simple turn-taking metric
+This software package implements tautau, a simple turn-taking metric
 developed by Peter Raffensperger, Russell Webb, Phillip Bones and Allan
 McInnes at the University of Canterbury in 2009-2012 for research into
 multi-agent systems and emergent communication. You may find addition
@@ -112,24 +117,55 @@ analyzing a recorded human conversation.
 blah = raw_input()
 print """Back to our agents."""
 print_uas()
+
 print """The turn-taking depends on time, and on the *resolution*, or the 
 window length that we examine. Suppose we're just interested in the turn-
-taking value of the entire sequence, starting at time 0 and with a 
-resolution of 12, the whole length. Then:
-tautau(usageAttemptSequences, 0, 12) = """ + str(turntakingmeasurementtools.tautau(usageAttemptSequences, 0, 12))
+taking value of the entire sequence, starting at time """ + str(t) + """ and with a 
+resolution of """ + str(r) + """. Then:"""
+tt = turntakingmeasurementtools.tautau(usageAttemptSequences, t, r)
+print """tautau(usageAttemptSequences, 0, """ + str(r) + """) = """ + str(tt)
 print """How does this work? tautau is defined as the product of the fairness
 and the efficiency of the agents' turn allocations. The agents' turn
-allocations are (for t = 0 and r = 12):
-allocations(usageAttemptSequences, 0, 12) = """ + str(turntakingmeasurementtools.allocation(usageAttemptSequences, 0, 12))
-print """That is, each agent gets a chance to use the shared resource 3 times without another 
-agent simultaneously butting in.
+allocations are (for t = """ + str(t) + """ and r = """ + str(r) + """):
+allocations(usageAttemptSequences, """ + str(t) + """, """ + str(r) + """) = """ + str(turntakingmeasurementtools.allocation(usageAttemptSequences, t, r))
+print """That is, the number of times each agent gets a chance to use the shared resource 
+times without another agent simultaneously butting in.
 [Press ENTER to continue]"""
 blah = raw_input()
+f = turntakingmeasurementtools.fairness_min(usageAttemptSequences, t, r)
 print """The fairness is calculated as the agent with the minimum allocation
 divided by the sum of the agents' allocations, normalised into the range [0, 1]:
-fairness_min(usageAttemptSequences, 0, 12) = """ + str(turntakingmeasurementtools.fairness_min(usageAttemptSequences, 0, 12))
+fairness_min(usageAttemptSequences, """ + str(t) + """, """ + str(r) + """) = """ + str(f)
+e = turntakingmeasurementtools.efficiency(usageAttemptSequences, t, r)
 print """And the efficiency is the sum of the agents' allocations, normalised into the range [0, 1]:
-efficiency(usageAttemptSequences, 0, 12) = """ + str(turntakingmeasurementtools.efficiency(usageAttemptSequences, 0, 12))
+efficiency(usageAttemptSequences, """ + str(t) + """, """ + str(r) + """) = """ + str(e)
 print """So the total turn-taking value is the product of the fairness and the efficency:
-tautau(usageAttemptSequences, 0, 12) = """ + str(turntakingmeasurementtools.tautau(usageAttemptSequences, 0, 12))
-print """tautau(usageAttemptSequences, 0, 12) = fairness_min(usageAttemptSequences, 0, 12) * """ + str(turntakingmeasurementtools.fairness_min(usageAttemptSequences, 0, 12))
+tautau(usageAttemptSequences, """ + str(t) + """, """ + str(r) + """) = fairness_min(usageAttemptSequences, """ + str(t) + """, """ + str(r) + """) * 
+                                       efficiency(usageAttemptSequences, """ + str(t) + """, """ + str(r) + """)
+                                     = """ + str(f) + ' * ' + str(e) + """
+                                     = """ + str(tt)
+print """[Press ENTER to continue]"""
+blah = raw_input()
+print """Okay, so how do we know if the agents took turns successfully?
+Perhaps this quantity of turn-taking could be attributed to chance.
+To examine this possibility, we have to look at the turn-taking performance of
+random agents. Suppose we have A probabilistic agents, that try to use the
+resource with a constant probability on each time step that is independent of
+time or the other agents' actions. The worst case is when the probabilistic
+agents try to access the resource with probability, pu = 1.0 / A; this will
+maximise the expected turn-taking of the random agents.
+[Press ENTER to continue]"""
+blah = raw_input()
+
+print """Given this worst case, we can estimate the probability that our turn-taking
+value has occurred by chance, for a given number of agents (A = """ + str(A) + """) and a given
+resolution (r = """ + str(r) + """), estimated with some sample size (""" + str(samplesize) + """) of random usage attempt
+sequences:"""
+print """estimate_probability_of_tt_due_to_chance(A, r, samplesize, """ + str(tt) + """) = """ + str(turntakingmeasurementtools.estimate_probability_of_tt_due_to_chance(A, r, samplesize, tt))
+print """By looking at the probability of this turn-taking value arising by chance
+we can quantify our confidence in the assertion "turn-taking is present in these
+agents' behaviour." If the probability of that turn-taking occurring by chance is small
+then we can be confident that the agents' behaviour is caused by some process where 
+at least one agent's usage probabilities are not independent of time or are not 
+independent of the other agents' actions, or with some loss of statistical precision,
+we can say that the agents have produced coordinated turn-taking behaviour."""

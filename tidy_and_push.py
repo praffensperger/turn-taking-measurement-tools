@@ -113,7 +113,7 @@ add_file_headers_and_do_search_and_replace()
 run_tests()	
 commit()
 push_to_google_code()
-print "make source distribution?"
+print "make source distribution? (press ENTER for no, or 'y' then ENTER for yes)"
 answer = raw_input()
 if answer == 'y':
 	make_source_distribution()
