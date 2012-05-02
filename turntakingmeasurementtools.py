@@ -1,5 +1,5 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# Turn-Taking Measurement Tools v0.1 
+# Turn-Taking Measurement Tools v0.9 
 #
 # turntakingmeasurementtools.py
 #
@@ -42,7 +42,7 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 
-__version__ = "0.1"
+__version__ = "0.9"
 
 """Turn-Taking Measurement Tools
 

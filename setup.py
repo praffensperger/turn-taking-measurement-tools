@@ -1,5 +1,5 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# Turn-Taking Measurement Tools v0.1 
+# Turn-Taking Measurement Tools v0.9 
 #
 # setup.py
 #
@@ -43,7 +43,7 @@
 
 from distutils.core import setup
 
-turntakingmeasurementtoolsversion = "0.1"
+turntakingmeasurementtoolsversion = "0.9"
 
 with open('README.txt') as file:
     long_description = file.read()

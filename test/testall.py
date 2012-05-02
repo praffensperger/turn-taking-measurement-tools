@@ -1,5 +1,5 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# Turn-Taking Measurement Tools v0.1 
+# Turn-Taking Measurement Tools v0.9 
 #
 # testall.py
 #
@@ -88,3 +88,4 @@ for A, l in zip(range(1, 5), range(1, 5)):
 	assert(p >= 0.0)
 	assert(p <= 1.0)
 clean_up_tt_distribution_files()
+print "All tests passed!"

@@ -11,7 +11,7 @@ import os
 import re
 import datetime
 
-VERSION = "0.1"
+VERSION = "0.9"
 DATE = datetime.date.strftime( datetime.date.today(), "%d %B %Y")
 FIRST_YEAR = 2012
 THIS_YEAR = int(datetime.date.strftime( datetime.date.today(), "%Y"))
@@ -107,7 +107,7 @@ def push_to_google_code():
 
 def make_source_distribution():
 	print "Making source distribution file..."
-	os.system('p setup.py sdist --formats=zip')
+	os.system('python2.7 setup.py sdist --formats=zip')
 
 add_file_headers_and_do_search_and_replace()
 run_tests()	

@@ -1,5 +1,5 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# Turn-Taking Measurement Tools v0.1 
+# Turn-Taking Measurement Tools v0.9 
 #
 # main.py
 #
@@ -43,7 +43,10 @@
 
 
 print "Turn-Taking Measurement Tools"
+print "============================================="
 print "Example 1"
 execfile('example1.py')
+print "============================================="
 print "Example 2"
 execfile('example2.py')
+print "============================================="
