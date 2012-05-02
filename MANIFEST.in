@@ -1,4 +1,7 @@
 #include MANIFEST.in
 include *.txt
+include examples/*.pickle
+include examples/*.ttdist
+include examples/cpickleversion
 exclude tidy_and_push.py
 recursive-include examples *.txt *.py

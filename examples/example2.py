@@ -3,7 +3,7 @@
 #
 # example2.py
 #
-# By Peter Raffensperger 01 May 2012
+# By Peter Raffensperger 02 May 2012
 # 
 # Reference:
 # Raffensperger, P. A., Webb, R. Y., Bones, P. J., and McInnes, A. I. (2012). 
@@ -41,88 +41,21 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-
-
-try:
-	import turntakingmeasurementtools
-except ImportError:
-	import sys
-	sys.path.append('..')
-	import turntakingmeasurementtools
-
 import sys
 import cPickle as pickle
+import fpformat
 
 import numpy
 
 import lineplot
-#import turntakingcalculationtools
 import createorload
 import conversation_usage_attempt_sequences
+try:
+	import turntakingmeasurementtools
+except ImportError:
+	sys.path.append('..')
+	import turntakingmeasurementtools
 
-
-def Decimate(waveform, ratio):
-	waveform = numpy.array(waveform)
-	nsamplesOld = len(waveform)
-	assert((nsamplesOld % ratio) == 0)
-	nsamplesNew = nsamplesOld / ratio
-	waveform.shape = (nsamplesNew, ratio)
-	waveform = waveform.T
-	return waveform.flatten()[0:nsamplesNew]
-	
-def SmartDisplayDecimate(waveformIn, ratio):
-	waveform = numpy.array(waveformIn)
-	nsamplesOld = len(waveform)
-	assert((nsamplesOld % ratio) == 0)
-	nsamplesNew = nsamplesOld / ratio
-	waveform.shape = (nsamplesNew, ratio)
-	waveformMax = []
-	waveformMin = []
-	for w in waveform:
-		waveformMax.append(max(w))
-		waveformMin.append(min(w))
-	return numpy.array(waveformMax), numpy.array(waveformMin)
-
-def GetTTVsR(uasDecimated):
-	#uasDecimated = createorload.GetObjectFromFile(uasDecimatedFilename)
-	turntakingvalues_str = turntakingcalculationtools.get_cpp_tt_raw_multiagent([str(x) for x in uasDecimated], len(uasDecimated), start_r=100, resolution_step_size=100, num_agents=4, dry_run=False)
-	
-	resolutions = []
-	mean_tts = []
-	std_tts = []
-	for l in turntakingvalues_str.split('\n')[:-1]:
-		r, mean, std = l.split(' ')
-		resolutions.append(int(r))
-		mean_tts.append(float(mean))
-		std_tts.append(float(std))
-		
-	records = resolutions, mean_tts, std_tts
-	return records
-
-def GetAllocationsAndTTs(uas):
-	resolutions = [500, 1000, 3000]
-	ttValuesAtResolutions = []
-	allocationsAtResolutions = []
-	efficiencies = []
-	fairnesses = []
-	for r in resolutions:
-		tts = turntakingcalculationtools.turntakingValuesAtResolution(uas, r)
-		allocations = turntakingcalculationtools.allocationsAtResolution(uas, r)
-		efficiencies.append([sum(a) for a in numpy.array(allocations).transpose()])
-		fairness = []
-		for a in numpy.array(allocations).transpose():
-			if sum(a) > 0:
-				x = len(uas) * min(a) / sum(a)
-			else:
-				x = 0
-			fairness.append(x)
-	
-		assert(len(fairness) == len(tts))
-		fairnesses.append(fairness)
-		ttValuesAtResolutions.append(tts)
-		allocationsAtResolutions.append(allocations)
-
-	return resolutions, ttValuesAtResolutions, allocationsAtResolutions, fairnesses, efficiencies
 
 def GetOverallUsage(uas):
 	uasT = numpy.array(uas).transpose()
@@ -138,122 +71,171 @@ def GetOverallUsage(uas):
 			assert(False)
 	return overallUsage
 
-if __name__ == '__main__':
-	forceRecalcuation = False
-	
-	decimationFactor = 441 #	* 2
+def enter_to_continue():
+	print '[Press ENTER to continue]'
+	blah = raw_input()
 
-	maxTimeStep = 6000
-	
-	audioDisplayRelativeScale = 1
-	dispalyDecimationRatio = decimationFactor * audioDisplayRelativeScale
+forceRecalculation = False
 
-	uasStandardForm = [[], [], [], []]
-	uasCompressed = conversation_usage_attempt_sequences.uasCompressed
-	for usageStep in uasCompressed:
-		for i in range(4):
-			uasStandardForm[i].append((usageStep/(2**i)) % 2)
-	
-	overallUsage = createorload.CreateOrLoadByObject(uasStandardForm, GetOverallUsage, 'overallusage_uas', 
-		forceCreation=forceRecalcuation)
-	print "Total timesteps unused    :", (numpy.array(overallUsage) == 0).sum()
-	print "Total timesteps single use:", (numpy.array(overallUsage) == 1).sum()
-	print "Total timesteps collision :", (numpy.array(overallUsage) == 2).sum()	
+cpickleversionfile = open('cpickleversion', 'r')
+if pickle.__version__ != cpickleversionfile.read():
+	print "Detected a different version of cPickle than the one used to make the data files."
+	print "You will have to recalculate some values which might have otherwise been cached."
+	forceRecalculation = True
+	cpickleversionfile.close()
+	cpickleversionfile = open('cpickleversion', 'w')
+	cpickleversionfile.write(pickle.__version__)
+cpickleversionfile.close()	
 
-	dt = 0.01
-	dt_audio = dt / audioDisplayRelativeScale
-	x = numpy.arange(0.0, len(overallUsage) / 100.0, dt)
-	g = lineplot.quickplot(overallUsage)
-	lineplot.lineplot(x, overallUsage, 'overall usage', 't (seconds)', '0-unused, 1->single, 2->collision', 'overallusage.pdf')
-	
-	resolutions, mean_tts, std_tts = records
-	lineplot.lineplot_meantau(resolutions, mean_tts, std_tts, '', '$r$ (seconds)', r'Mean $\tau\tau(t, r)$', 'tt_vs_r.pdf', resolutionDivisionFactor=100, showStd=True)
-	
-	#assert(decimationFactor == dispalyDecimationRatio)
+decimationFactor = 441 #	* 2
 
-	speakerNames = ['M7321 (Gary)', 'F1777 (Alisha)', 'M2828 (Daniel)', 'F0622 (Angela)']
-	labels = ['$S_{M4}(t)$', '$S_{F3}(t)$', '$S_{M2}(t)$', '$S_{F1}(t)$']
-	lineplot.humanTTturnrecord(labels, uasStandardForm, speakerWaveformPlotInformation, dt, dt_audio,
-		'waveforms_and_turnrecords.pdf')
-	lineplot.humanTTturnrecord(labels, uasStandardForm, speakerWaveformPlotInformation, dt, dt_audio,
-		'waveforms_and_turnrecords.png')
+maxTimeStep = 6000
 
-	
-	resolutions, ttValuesAtResolutions, allocationsAtResolutions, fairnesses, efficiencies = createorload.CreateOrLoadByObject(uasStandardForm, 
-		GetAllocationsAndTTs, 'allocations_and_tts_all_agents', forceCreation=forceRecalcuation)
-	#CreateOrLoad(uasFilename, GetAllocationsAndTTs, forceCreation=True)
-	assert(len(resolutions) > 0)
-	assert(len(ttValuesAtResolutions) > 0)
+audioDisplayRelativeScale = 1
+displayDecimationRatio = decimationFactor * audioDisplayRelativeScale
+dt = 0.01
+dt_audio = dt / audioDisplayRelativeScale
+resolution = 500
+resolutionsStepSize = 250
+maxTestResolution = maxTimeStep
+testResolutions = [100, 250, resolution, 1000, 1500, 2000, 3000, 4000, 5000]
+numAgents = 4
 
-	#lineplot.lineplotmulti(range(len(uasStandardForm[0])), uasStandardForm, 't', [s[:5] for s in speakerNames], 'turnrecords.pdf', [1.1 for s in speakerNames])
-	
-	ttOfFourRandomAgents = {500: 0.362815664, 1000: 0.38001052, 3000: 0.397595329334} #Computed from 10^6 random usage attempt sequences
-	ttOfFourRandomAgents_std = {500: 0.0344489173741, 1000: 0.0247301516641, 3000: 0.0144640861557}
-	
-	for r, allocations, tts, fairness, efficiency in zip(resolutions, allocationsAtResolutions, ttValuesAtResolutions, fairnesses, efficiencies):
-		#x = range(6000)
-		#import pdb; pdb.set_trace()
-		#allocations = allocations + ([0] * (6000 - len(allocations)))
-		#tts = tts + ([0] * (6000 - len(tts)))
-		#lineplot.lineplotmulti(range(len(allocations[0])),
-		#	allocations, 't', 
-		#	[s[:5] for s in speakerNames], 'allocations' + '_' + str(r) + '.pdf', [allocations.max() for s in speakerNames])
-		#print len(allocations[0]), len(tts)
-		x = numpy.arange(0.0, len(tts) / 100.0, dt)
-		assert(len(x) == len(tts))
-		lineplot.lineplot_tt_over_time(x, 
-			tts, '', '$t$ (seconds)', r'$\tau\tau(t, ' + str(r/100) + 's)$', 'all4_tt' + str(r) + '.pdf', ttOfFourRandomAgents[r], xmax=maxTimeStep/100.0)
-		lineplot.lineplot(x, fairness, '', 't (seconds)', 'fairness', 'fairness' + str(r) + '_all4.pdf')
-		print "r=", r
-		print "Mean fairness", sum(fairness) / len(fairness)
-		lineplot.lineplot(x, efficiency, '', 't (seconds)', 'efficiency', 'efficiency' + str(r) + '_all4.pdf')
-		print "Mean efficiency", sum(efficiency) / len(efficiency)
-	
-	print "Now with just three agents in the picture"
-	uasStandardFormJustThree = uasStandardForm[0:2] 
-	uasStandardFormJustThree.append(uasStandardForm[3])
-	lineplot.lineplotmulti(range(len(uasStandardFormJustThree[0])), uasStandardFormJustThree, 't', ['a', 'b', 'c'], 'turnrecords_just3.pdf', [1.1, 1.1, 1.1, ])
-	assert(len(uasStandardFormJustThree) == 3)
-	resolutions, ttValuesAtResolutions, allocationsAtResolutions, fairnesses, efficiencies = createorload.CreateOrLoadByObject(uasStandardFormJustThree, 
-		GetAllocationsAndTTs, 'allocations_and_tts_just3_agents', forceCreation=forceRecalcuation)
-	
-	ttOfThreeRandomAgents = {500: 0.400968246, 1000: 0.413663778, 3000: 0.426638539} #Computed from 10^6 random usage attempt sequences
-	ttOfThreeRandomAgents_std = {500: 0.0321125947828, 1000: 0.0229164133486, 3000: 0.0133680182131}
-	
-	for r, allocations, tts in zip(resolutions, allocationsAtResolutions, ttValuesAtResolutions):
-		x = numpy.arange(0.0, len(tts) / 100.0, dt)
-		assert(len(x) == len(tts))
-		lineplot.lineplot_tt_over_time(x, 
-			tts, '', '$t$ (seconds)', r'$\tau\tau(t, ' + str(r/100) + r's)$ (3 agents)', 'just3_tt' + str(r) + '.pdf', ttOfThreeRandomAgents[r], xmax=maxTimeStep/100.0)
+print """This example parallels Section 5 of 
+Raffensperger, P. A., Webb, R. Y., Bones, P. J., and McInnes, A. I. (2012). 
+A simple metric for turn-taking in emergent communication. 
+Adaptive Behavior, 20(2):104-116.
 
-	print "Now with just two agents in the picture, first and last"
-	uasStandardFormJustTwo = [uasStandardForm[0], uasStandardForm[3]]
-	lineplot.lineplotmulti(range(len(uasStandardFormJustTwo[0])), uasStandardFormJustTwo, 't', ['a', 'b', 'c'], 'turnrecords_just2.pdf', [1.1, 1.1, 1.1, ])
-	resolutions, ttValuesAtResolutions, allocationsAtResolutions, fairnesses, efficiencies = createorload.CreateOrLoadByObject(uasStandardFormJustTwo, 
-		GetAllocationsAndTTs, 'allocations_and_tts_just2_agents', forceCreation=forceRecalcuation)
-	
-	ttOfTwoRandomAgents = {500: 0.474734268, 1000: 0.482170214, 3000: 0.489685685334} #Computed from 10^6 random usage attempt sequences
-	ttOfTwoRandomAgents_std = {500: 0.0289842857167, 1000: 0.0205423406455, 3000: 0.0119255780415}
-	
-	for r, allocations, tts in zip(resolutions, allocationsAtResolutions, ttValuesAtResolutions):
-		x = numpy.arange(0.0, len(tts) / 100.0, dt)
-		assert(len(x) == len(tts))
-		lineplot.lineplot_tt_over_time(x, 
-			tts, '', '$t$ (seconds)', r'$\tau\tau(t, ' + str(r/100) + r's)$ (2 agents)', 'just2_tt' + str(r) + '.pdf', ttOfTwoRandomAgents[r], xmax=maxTimeStep/100.0)
+Here we will examine the quantity of turn-taking present in a record human
+conversation, taken from the COnversational Speech In Noisy Environments 
+(COSINE) corpus created by:
+Stupakov, A., Hanusa, E., Bilmes, J., & Fox, D. (2009). 
+COSINE - a corpus of multi-party COnversational Speech In Noisy Environments. 
+In IEEE International Conference on Acoustics, Speech and Signal Processing, 
+2009, (ICASSP 2009) (pp. 4153-4156). IEEE.
 
-	print "Now with just two agents in the picture, first and third"
-	uasStandardFormJustTwo = [uasStandardForm[0], uasStandardForm[2]]
-	lineplot.lineplotmulti(range(len(uasStandardFormJustTwo[0])), uasStandardFormJustTwo, 't', ['a', 'b', 'c'], 'turnrecords_just2.pdf', [1.1, 1.1, 1.1, ])
-	resolutions, ttValuesAtResolutions, allocationsAtResolutions, fairnesses, efficiencies = createorload.CreateOrLoadByObject(uasStandardFormJustTwo, 
-		GetAllocationsAndTTs, 'allocations_and_tts_just2_agents13', forceCreation=forceRecalcuation)
-	
+See also:
+Stupakov, A., Hanusa, E., Vijaywargi, D., Fox, D., & Bilmes, J. (2012). 
+The design and collection of COSINE, a multi-microphone in situ speech corpus 
+recorded in noisy environments. Computer Speech & Language, 26(1), 52-66.
 
-	for r, allocations, tts in zip(resolutions, allocationsAtResolutions, ttValuesAtResolutions):
-		x = numpy.arange(0.0, len(tts) / 100.0, dt)
-		assert(len(x) == len(tts))
-		lineplot.lineplot_tt_over_time(x, 
-			tts, '', '$t$ (seconds)', r'$\tau\tau(t, ' + str(r/100) + r's)$ (2 agents 1n3)', 'just2_13_tt' + str(r) + '.pdf', ttOfTwoRandomAgents[r], xmax=maxTimeStep/100.0)
+The data here are from a conversation from Session 2 of the COSINE corpus, 
+starting at 7 minutes 47.5 seconds into the session and lasting 1 minute.
+The original audio was filtered with a one-pole high pass filter with a
+cutoff frequency of 478 Hz, followed by an envelop follower, then thresholded.
+The resulting usage attempt sequences were decimated from 44100 Hz down to 
+100 Hz."""
+uasStandardForm = [[], [], [], []]
+uasCompressed = conversation_usage_attempt_sequences.uasCompressed
+for usageStep in uasCompressed:
+	for i in range(4):
+		uasStandardForm[i].append((usageStep/(2**i)) % 2)
+enter_to_continue()
 
+print """The usage attempt sequences reveal when the four participants in the
+conversation are talking. Sometimes no one is talking and the conversational 
+floor goes 'unused,' other times more than one person is talking and there is
+a 'collision.' Out of the """ + str(maxTimeStep) + """ time steps, we have
+these statistics:"""
+overallUsage = createorload.CreateOrLoadByObject(uasStandardForm, GetOverallUsage, 'overallusage_uas', 
+	forceCreation=forceRecalculation)
+print "Total time steps unused    :", (numpy.array(overallUsage) == 0).sum()
+print "Total time steps single use:", (numpy.array(overallUsage) == 1).sum()
+print "Total time steps collision :", (numpy.array(overallUsage) == 2).sum()	
 
+print """If you have Gnuplot or matplotlib installed, you can look at these 
+data on a graph."""
 
-	
+x = numpy.arange(0.0, len(overallUsage) / 100.0, dt)
+graph = lineplot.plotxy(x, overallUsage, 'overall usage', 't (seconds)', '0-unused, 1-single, 2-collision')
+enter_to_continue()
+del graph
+
+print """We have to choose a resolution which we will use to measure the turn-taking.
+There is a time between about 25 seconds and 30 seconds when the third agent talks
+while the others are mostly quiet. (If you have a graphing package you can see this
+in the next graph.) To discriminate this low turn-taking period, we will chose a
+resolution of r = """ + str(resolution/dt) + """ seconds. Given our sample rate of """ + str(1.0/dt) + """ Hz, this means 
+r = """ + str(resolution) + """ samples.
+"""
+
+labels = ['$S_{M4}(t)$', '$S_{F3}(t)$', '$S_{M2}(t)$', '$S_{F1}(t)$']
+graph = lineplot.humanTTturnrecord(labels, uasStandardForm, dt)
+enter_to_continue()
+del graph
+
+print """Just to check that we aren't missing anything, we'll have a look at the
+mean turn-taking at a variety of resolutions. 
+"""
+
+ttValuesWereComputed = False
+
+def get_mean_tts_and_tts_at_resolution(testResolutions):
+	global ttValuesWereComputed
+	ttValuesWereComputed = True
+	print "Computing mean turn-taking values... (this may take a while)"
+	meanTTs = []
+	ttsAtResolution = []
+	for r in testResolutions:
+		ttSum = 0.0
+		ttCount = 0
+		for t in range(0, maxTimeStep-r):
+			tt = turntakingmeasurementtools.tautau(uasStandardForm, t, r)
+			if r == resolution:
+				ttsAtResolution.append(tt)
+			ttSum += tt
+			ttCount +=1
+		if ttCount > 0:
+			meanTTs.append(ttSum/ttCount)
+		print "r =", r, " => mean tautau =", meanTTs[-1]
+	assert(len(ttsAtResolution) > 0)
+	return meanTTs, ttsAtResolution
+
+meanTTs, ttsAtResolution = createorload.CreateOrLoadByObject(testResolutions, get_mean_tts_and_tts_at_resolution, 'mean_turn_taking_values_and_tts_at_resolution', 
+	forceCreation=forceRecalculation)
+
+if not ttValuesWereComputed:
+	print "Loaded mean turn-taking values from a file!"
+	for r, mtt in zip(testResolutions, meanTTs):
+		print "r =", r, " => mean tautau =", mtt
+		
+print """Notice that the mean turn-taking mostly increases with increasing resolution.
+This is to be expected. See Section 2.3 of 
+Raffensperger, P. A., Webb, R. Y., Bones, P. J., and McInnes, A. I. (2012). 
+A simple metric for turn-taking in emergent communication. 
+Adaptive Behavior, 20(2):104-116.
+"""
+graph = lineplot.plotxy(testResolutions, meanTTs, 'Mean turn-taking as a function of resolution', 'r (seconds)', r'Mean $\tau\tau(t, r)$')
+enter_to_continue()
+del graph
+
+samplesize = 10000
+
+print """Now that we have chosen a resolution, we can look at the turn-taking as a 
+function of time. But first, we'd like to know if the agents have produced turn-taking
+better than the best possible random agents. So we'll estimated the mean turn-taking
+of the worst-case probabilistic agents, which is agents that attempt to use the shared
+resource with a probability pu = 1.0 / A, where A is the number of agents.
+For four random agents, at a resolution of """ + str(resolution) +  """ we estimated
+this mean value with a sample of """ + str(samplesize) + """ random usage attempt sequences as:
+"""
+if forceRecalculation:
+	save_random_tt_distribution(numAgents, resolution, 1.0/numAgents, samplesize)
+randomAgentsMeantt, randomAgentsVariancett = turntakingmeasurementtools.estimate_tt_mean_and_variance(numAgents, resolution, 1.0/numAgents, samplesize=samplesize, persistentData=True)
+print randomAgentsMeantt
+print """
+The turn-taking over time can be visualised with respect to his value with the following graph.
+The horizontal line is the expected turn-taking of random agents.
+Sometimes, the four participants in the conversation take turns worse than random agents!
+"""
+x = numpy.arange(0.0, len(ttsAtResolution) / 100.0, dt)
+graph = lineplot.plotxy_hline(x, ttsAtResolution, 'Turn-taking as a function of time at r = ' + str(resolution), 't (seconds)', r'$\tau\tau(t, r)$', randomAgentsMeantt)
+enter_to_continue()
+del graph
+print """If you have no graphing package, then you can see the values printed as a table:"""
+displayResolution = 50
+for i, t, tt in zip(range(len(x)), x, ttsAtResolution):
+	if i % displayResolution == 0:
+		print "t =", fpformat.fix(t, 2), " tautau(t, " + str(resolution) + ") =", fpformat.fix(tt, 3), "E(tautau)|Random agents =", fpformat.fix(randomAgentsMeantt, 4)
+		if (i/displayResolution) % 20 == 19:
+			enter_to_continue()

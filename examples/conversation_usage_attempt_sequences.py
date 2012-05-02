@@ -3,7 +3,7 @@
 #
 # conversation_usage_attempt_sequences.py
 #
-# By Peter Raffensperger 01 May 2012
+# By Peter Raffensperger 02 May 2012
 # 
 # Reference:
 # Raffensperger, P. A., Webb, R. Y., Bones, P. J., and McInnes, A. I. (2012). 
@@ -40,6 +40,28 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+"""
+These data are from the COnversational Speech In Noisy Environments (COSINE) 
+corpus created by:
+Stupakov, A., Hanusa, E., Bilmes, J., & Fox, D. (2009). 
+COSINE - a corpus of multi-party COnversational Speech In Noisy Environments. 
+In IEEE International Conference on Acoustics, Speech and Signal Processing, 
+2009, (ICASSP 2009) (pp. 4153-4156). IEEE.
+
+See also:
+Stupakov, A., Hanusa, E., Vijaywargi, D., Fox, D., & Bilmes, J. (2012). 
+The design and collection of COSINE, a multi-microphone in situ speech corpus 
+recorded in noisy environments. Computer Speech & Language, 26(1), 52-66.
+
+The data here are from a conversation from Session 2 of the COSINE corpus, 
+starting at 7 minutes 47.5 seconds into the session and lasting 1 minute.
+
+The original audio was filtered with a one-pole high pass filter with a
+cutoff frequency of 478 Hz, followed by an envelop follower, then thresholded.
+The resulting usage attempt sequences were decimated from 44100 Hz down to 
+100 Hz.
+"""
 
 uasCompressed = [0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 4,

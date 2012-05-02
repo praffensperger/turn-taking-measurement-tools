@@ -3,7 +3,7 @@
 #
 # createorload.py
 #
-# By Peter Raffensperger 01 May 2012
+# By Peter Raffensperger 02 May 2012
 # 
 # Reference:
 # Raffensperger, P. A., Webb, R. Y., Bones, P. J., and McInnes, A. I. (2012). 
@@ -71,8 +71,10 @@ def CreateOrLoadByObject(sourceObject, creationRoutine, id, forceCreation=False)
 		sourceObjectDiskCopy = GetObjectFromFile(sourceFilename)
 		if sourceObjectDiskCopy != sourceObject:
 			mustCreate = True
+			SaveObjectToFile(sourceObject, sourceFilename)
 	except IOError, OSError:
 		mustCreate = True
+		SaveObjectToFile(sourceObject, sourceFilename)
 	
 	if not mustCreate:
 		try:

@@ -19,7 +19,8 @@ resolutions in binary-valued usage attempt sequences of arbitrary lengths with
 any number of agents
 - Functions for fairness and efficient metrics
 - Estimation routines for the turn-taking of random agents
-- Examples
+- Python doc strings for all key functions
+- Examples (run examples/main.py)
 
 Dependencies:
 -------------
@@ -28,9 +29,9 @@ Dependencies:
 
 If you use Turn-Taking Measurement Tools in an academic project, we invite you
 to reference the original publication:
-Raffensperger, P. A., Webb, R. Y., Bones, P. J., and McInnes, A. I. (2012). A
-simple metric for turn-taking in emergent communication. Adaptive Behavior,
-20(2):104-116.
+Raffensperger, P. A., Webb, R. Y., Bones, P. J., and McInnes, A. I. (2012). 
+A simple metric for turn-taking in emergent communication. 
+Adaptive Behavior, 20(2):104-116.
 
 Paper abstract for "A simple metric for turn-taking in emergent
 communication":
