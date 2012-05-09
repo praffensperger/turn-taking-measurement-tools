@@ -59,11 +59,12 @@ def make_source_distribution():
 
 def make_pdf_sphinx_documentation():
 	print "Making pdf documentation..."
-	os.system('make latexpdf')
+	os.system('cd docs; make latexpdf')
 	os.system('cp docs/_build/latex/Turn-TakingMeasurementTools.pdf turntakingmeasurementtools_manual.pdf')
 
 add_file_headers_and_do_search_and_replace()
 run_tests()	
+make_pdf_sphinx_documentation()
 commit()
 push_to_google_code()
 print "make source distribution? (press ENTER for no, or 'y' then ENTER for yes)"
