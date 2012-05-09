@@ -3,7 +3,7 @@
 #
 # textualsymbols.py
 #
-# By Peter Raffensperger 02 May 2012
+# By Peter Raffensperger 09 May 2012
 # 
 # Reference:
 # Raffensperger, P. A., Webb, R. Y., Bones, P. J., and McInnes, A. I. (2012). 

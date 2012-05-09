@@ -3,7 +3,7 @@
 #
 # turntakingmeasurementtools.py
 #
-# By Peter Raffensperger 02 May 2012
+# By Peter Raffensperger 09 May 2012
 # 
 # Reference:
 # Raffensperger, P. A., Webb, R. Y., Bones, P. J., and McInnes, A. I. (2012). 
@@ -100,10 +100,11 @@ def tautau(U, t, r):
 	resolution r, using the block of time steps [t, t+r-1].
 	
 	Parameters:
-	U -- a binary valued usage attempt sequence of shape (A, l), where A is the number of agents 
-		 and l is the length. (As either a numpy array or a list of lists)
-	t -- the time at which to calculate the turn-taking measure
-	r -- the 'resolution' or window length, with l <= t+r
+	
+	* U -- a binary valued usage attempt sequence of shape (A, l), where A is the number of agents 
+	  and l is the length. (As either a numpy array or a list of lists)
+	* t -- the time at which to calculate the turn-taking measure
+	* r -- the 'resolution' or window length, with l <= t+r
 	
 	Return value:
 	A real value in [0, 1] representing the quantity of turn-taking in U in the range [t, t+r-1]
@@ -122,10 +123,11 @@ def allocation(U, t, r):
 	resolution r, using the block of time steps [t, t+r-1].
 	
 	Parameters:
-	U -- a binary valued usage attempt sequence of shape (A, l), where A is the number of agents 
-		 and l is the length. (As either a numpy array or a list of lists)
-	t -- the time at which to calculate the agent allocations
-	r -- the 'resolution' or window length, with l <= t+r
+	
+	* U -- a binary valued usage attempt sequence of shape (A, l), where A is the number of agents 
+	  and l is the length. (As either a numpy array or a list of lists)
+	* t -- the time at which to calculate the agent allocations
+	* r -- the 'resolution' or window length, with l <= t+r
 	
 	Return value:
 	A vector of length A representing turn allocations of each agent
@@ -144,10 +146,11 @@ def f_turn(U, t, r):
 	at time t and resolution r, using the block of time steps [t, t+r-1].
 	
 	Parameters:
-	U -- a binary valued usage attempt sequence of shape (2, l), this measure is only defined for 
-		 pairs of agents, where l is the length. (As either a numpy array or a list of lists)
-	t -- the time at which to calculate the turn-taking measure
-	r -- the 'resolution' or window length, with l <= t+r
+	
+	* U -- a binary valued usage attempt sequence of shape (2, l), this measure is only defined for 
+	  pairs of agents, where l is the length. (As either a numpy array or a list of lists)
+	* t -- the time at which to calculate the turn-taking measure
+	* r -- the 'resolution' or window length, with l <= t+r
 	
 	Return value:
 	A real value in [0, r*r/4] representing the quantity of turn-taking in U in the range [t, t+r-1]
@@ -167,10 +170,11 @@ def fairness_min(U, t, r):
 	resolution r, using the block of time steps [t, t+r-1].
 	
 	Parameters:
-	U -- a binary valued usage attempt sequence of shape (A, l), where A is the number of agents 
-		 and l is the length. (As either a numpy array or a list of lists)
-	t -- the time at which to calculate the fairness measure
-	r -- the 'resolution' or window length, with l <= t+r
+	
+	* U -- a binary valued usage attempt sequence of shape (A, l), where A is the number of agents 
+	  and l is the length. (As either a numpy array or a list of lists)
+	* t -- the time at which to calculate the fairness measure
+	* r -- the 'resolution' or window length, with l <= t+r
 	
 	Return value:
 	A real value in [0, 1] representing the fairness of the turn allocation in U in the range [t, t+r-1]
@@ -193,10 +197,11 @@ def fairness_jain(U, t, r, exponent=2.0):
 	resolution r, using the block of time steps [t, t+r-1].
 	
 	Parameters:
-	U -- a binary valued usage attempt sequence of shape (A, l), where A is the number of agents 
-		 and l is the length. (As either a numpy array or a list of lists)
-	t -- the time at which to calculate the fairness measure
-	r -- the 'resolution' or window length, with l <= t+r
+	
+	* U -- a binary valued usage attempt sequence of shape (A, l), where A is the number of agents 
+	  and l is the length. (As either a numpy array or a list of lists)
+	* t -- the time at which to calculate the fairness measure
+	* r -- the 'resolution' or window length, with l <= t+r
 	
 	Return value:
 	A real value representing the Jain fairness of the turn allocation in U in the range [t, t+r-1]
@@ -220,10 +225,11 @@ def efficiency(U, t, r):
 	resolution r, using the block of time steps [t, t+r-1].
 	
 	Parameters:
-	U -- a binary valued usage attempt sequence of shape (A, l), where A is the number of agents 
-		 and l is the length. (As either a numpy array or a list of lists)
-	t -- the time at which to calculate the efficiency measure
-	r -- the 'resolution' or window length, with l <= t+r
+	
+	* U -- a binary valued usage attempt sequence of shape (A, l), where A is the number of agents 
+	  and l is the length. (As either a numpy array or a list of lists)
+	* t -- the time at which to calculate the efficiency measure
+	* r -- the 'resolution' or window length, with l <= t+r
 	
 	Return value:
 	A real value in [0, 1] representing the efficiency of the turn allocation in U in the range [t, t+r-1]
@@ -296,9 +302,10 @@ def generate_random_usage_attempt_sequence(numAgents, length, pu):
 	attempt probability
 	
 	Parameters:
-	numAgents -- the desired number of agents in the random usage attempt sequence
-	length -- the number of time steps of the usage attempt sequence
-	pu -- the probability that a bit in the usage attempt sequence will be 1
+	
+	* numAgents -- the desired number of agents in the random usage attempt sequence
+	* length -- the number of time steps of the usage attempt sequence
+	* pu -- the probability that a bit in the usage attempt sequence will be 1
 	
 	Return value:
 	A random binary-valued usage attempt sequence as a numpy array of shape (numAgents, length)
@@ -326,10 +333,11 @@ def generate_random_turn_taking_values(numAgents, r, pu, samples):
 	probability of the agents 
 	
 	Parameters:
-	numAgents -- the desired number of probabilistic agents to include
-	r -- the turn-taking resolution
-	pu -- the probability that a bit in each usage attempt sequence will be 1
-	samples -- the number of random turn-taking values to generate
+	
+	* numAgents -- the desired number of probabilistic agents to include
+	* r -- the turn-taking resolution
+	* pu -- the probability that a bit in each usage attempt sequence will be 1
+	* samples -- the number of random turn-taking values to generate
 	
 	Return value:
 	A list of random turn-taking values
@@ -368,12 +376,15 @@ def save_random_tt_distribution(numAgents, r, pu, samples, verbose=False):
 	attempt probability of the agents 
 	
 	Parameters:
-	numAgents -- the desired number of probabilistic agents to include
-	r -- the turn-taking resolution
-	pu -- the probability that a bit in each usage attempt sequence will be 1
-	samples -- the number of random turn-taking values to generate
+	
+	* numAgents -- the desired number of probabilistic agents to include
+	* r -- the turn-taking resolution
+	* pu -- the probability that a bit in each usage attempt sequence will be 1
+	* samples -- the number of random turn-taking values to generate
+	
 	Keyword arguments:
-	verbose -- set to True to make this function print out its status to stdin as it goes
+	
+	* verbose -- set to True to make this function print out its status to stdin as it goes
 	
 	See Section 3 of:
 	Raffensperger, P. A., Webb, R. Y., Bones, P. J., and McInnes, A. I. (2012). 
@@ -399,10 +410,11 @@ def load_random_tt_distribution(numAgents, r, pu, samples):
 	Load a file with a population of random turn-taking values, assuming that it exists
 	
 	Parameters:
-	numAgents -- the desired number of probabilistic agents to include
-	r -- the turn-taking resolution
-	pu -- the probability that a bit in each usage attempt sequence will be 1
-	samples -- the number of random turn-taking values to generate
+	
+	* numAgents -- the desired number of probabilistic agents to include
+	* r -- the turn-taking resolution
+	* pu -- the probability that a bit in each usage attempt sequence will be 1
+	* samples -- the number of random turn-taking values to generate
 	
 	See Section 3 of:
 	Raffensperger, P. A., Webb, R. Y., Bones, P. J., and McInnes, A. I. (2012). 
@@ -420,13 +432,16 @@ def estimate_tt_mean_and_variance(numAgents, r, pu, samplesize=20000, persistent
 	random agents with the given usage attempt probability.
 	
 	Parameters:
-	numAgents -- the desired number of probabilistic agents to include
-	r -- the turn-taking resolution
-	pu -- the probability that a bit in each usage attempt sequence will be 1
+	
+	* numAgents -- the desired number of probabilistic agents to include
+	* r -- the turn-taking resolution
+	* pu -- the probability that a bit in each usage attempt sequence will be 1
+	
 	Keyword arguments:
-	samplesize -- the number of independent turn-taking value samples to include
-	persistentData -- set to True to save the turn-taking value distribution 
-	   to disk for future use
+	
+	* samplesize -- the number of independent turn-taking value samples to include
+	* persistentData -- set to True to save the turn-taking value distribution 
+	  to disk for future use
 	
 	See Section 3 of:
 	Raffensperger, P. A., Webb, R. Y., Bones, P. J., and McInnes, A. I. (2012). 
@@ -455,14 +470,16 @@ def estimate_probability_of_tt_due_to_chance(numAgents, r, samplesize, target_tt
 	all the agents
 	
 	Parameters:
-	numAgents -- the desired number of probabilistic agents to include
-	r -- the turn-taking resolution
-	samplesize -- the number of independent turn-taking value samples to include
+	
+	* numAgents -- the desired number of probabilistic agents to include
+	* r -- the turn-taking resolution
+	* samplesize -- the number of independent turn-taking value samples to include
 
 	Keyword arguments:
-	persistentData -- set to True to save the turn-taking value distribution 
-	   to disk for future use
-	verbose -- set to True  
+	
+	* persistentData -- set to True to save the turn-taking value distribution 
+	  to disk for future use
+	* verbose -- set to True  
 	
 	See Section 3 of:
 	Raffensperger, P. A., Webb, R. Y., Bones, P. J., and McInnes, A. I. (2012). 
