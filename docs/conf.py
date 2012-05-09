@@ -214,7 +214,7 @@ htmlhelp_basename = 'Turn-TakingMeasurementToolsdoc'
 
 
 # -- Options for LaTeX output --------------------------------------------------
-latex_logo = 'icon.png'
+latex_logo = '../icon.png'
 latex_use_modindex = False
 latex_elements = {
 # The paper size ('letterpaper' or 'a4paper').

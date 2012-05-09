@@ -13,7 +13,7 @@ from projectinfo import *
 
 def add_file_headers_and_do_search_and_replace():
 	PYTHON_EXTENSIONS = ['.py']
-	EXCEPTIONS = ['tidy_and_push.py']
+	EXCEPTIONS = ['tidy_and_push.py', 'projectinfo.py']
 	SEARCH_AND_REPLACE = {'__version__ =.*?\n': '__version__ = "' + VERSION + '"\n',
 		'turntakingmeasurementtoolsversion =.*?\n': 'turntakingmeasurementtoolsversion = "' + VERSION + '"\n',
 	}
@@ -56,6 +56,11 @@ def push_to_google_code():
 def make_source_distribution():
 	print "Making source distribution file..."
 	os.system('python2.7 setup.py sdist --formats=zip')
+
+def make_pdf_sphinx_documentation():
+	print "Making pdf documentation..."
+	os.system('make latexpdf')
+	os.system('cp docs/_build/latex/Turn-TakingMeasurementTools.pdf turntakingmeasurementtools_manual.pdf')
 
 add_file_headers_and_do_search_and_replace()
 run_tests()	

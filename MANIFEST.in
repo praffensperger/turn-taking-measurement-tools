@@ -1,5 +1,8 @@
 #include MANIFEST.in
 include *.txt
+include turntakingmeasurementtools_manual.pdf
+include docs/*.rst
+include docs/Makefile
 include examples/*.pickle
 include examples/*.ttdist
 include examples/cpickleversion
