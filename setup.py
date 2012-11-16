@@ -1,9 +1,9 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# Turn-Taking Measurement Tools v0.9 
+# Turn-Taking Measurement Tools v0.91 
 #
 # setup.py
 #
-# By Peter Raffensperger 09 May 2012
+# By Peter Raffensperger 16 November 2012
 # 
 # Reference:
 # Raffensperger, P. A., Webb, R. Y., Bones, P. J., and McInnes, A. I. (2012). 
@@ -43,7 +43,7 @@
 
 from distutils.core import setup
 
-turntakingmeasurementtoolsversion = "0.9"
+turntakingmeasurementtoolsversion = "0.91"
 
 with open('README.txt') as file:
     long_description = file.read()

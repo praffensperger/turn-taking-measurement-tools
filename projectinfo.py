@@ -1,7 +1,7 @@
 import re
 import datetime
 
-VERSION = "0.9"
+VERSION = "0.91"
 DATE = datetime.date.strftime( datetime.date.today(), "%d %B %Y")
 FIRST_YEAR = 2012
 THIS_YEAR = int(datetime.date.strftime( datetime.date.today(), "%Y"))

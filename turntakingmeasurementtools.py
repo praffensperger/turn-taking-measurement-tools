@@ -1,9 +1,9 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# Turn-Taking Measurement Tools v0.9 
+# Turn-Taking Measurement Tools v0.91 
 #
 # turntakingmeasurementtools.py
 #
-# By Peter Raffensperger 09 May 2012
+# By Peter Raffensperger 16 November 2012
 # 
 # Reference:
 # Raffensperger, P. A., Webb, R. Y., Bones, P. J., and McInnes, A. I. (2012). 
@@ -42,7 +42,7 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 
-__version__ = "0.9"
+__version__ = "0.91"
 
 """Turn-Taking Measurement Tools
 
@@ -426,7 +426,7 @@ def load_random_tt_distribution(numAgents, r, pu, samples):
 	return pickle.load(file)
 	
 	
-def estimate_tt_mean_and_variance(numAgents, r, pu, samplesize=20000, persistentData=False):
+def estimate_tt_mean_and_variance(numAgents, r, pu, samplesize=100000, persistentData=False):
 	"""
 	Estimate the mean and variance of the turn-taking value for a group of 
 	random agents with the given usage attempt probability.
@@ -463,7 +463,8 @@ def estimate_tt_mean_and_variance(numAgents, r, pu, samplesize=20000, persistent
 	v = tautaus_np.std()**2	
 	return m, v
 
-def estimate_probability_of_tt_due_to_chance(numAgents, r, samplesize, target_tt_value, persistentData=False, verbose=False):
+def estimate_probability_of_tt_due_to_chance(numAgents, r, samplesize, target_tt_value, 
+	persistentData=False, verbose=False):
 	"""
 	Estimate the probability that a particular turn-taking value is produced by
 	random processes, assuming the worst case usage attempt probabilities for 
@@ -474,6 +475,7 @@ def estimate_probability_of_tt_due_to_chance(numAgents, r, samplesize, target_tt
 	* numAgents -- the desired number of probabilistic agents to include
 	* r -- the turn-taking resolution
 	* samplesize -- the number of independent turn-taking value samples to include
+	  (1000000 is a good place to start)
 
 	Keyword arguments:
 	

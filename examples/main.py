@@ -1,9 +1,9 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# Turn-Taking Measurement Tools v0.9 
+# Turn-Taking Measurement Tools v0.91 
 #
 # main.py
 #
-# By Peter Raffensperger 09 May 2012
+# By Peter Raffensperger 16 November 2012
 # 
 # Reference:
 # Raffensperger, P. A., Webb, R. Y., Bones, P. J., and McInnes, A. I. (2012). 
